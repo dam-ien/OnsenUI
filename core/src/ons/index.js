@@ -522,13 +522,21 @@ ons._resolveLoadingPlaceholder = function(parent, page, link = ((el, done) => do
 
 function waitDeviceReady() {
   const unlockDeviceReady = ons._readyLock.lock();
-  window.addEventListener('DOMContentLoaded', () => {
+  const execUnlock = () => {
     if (ons.isWebView()) {
+      // Callback for event DeviceReady is called even if the event has already been fired
       window.document.addEventListener('deviceready', unlockDeviceReady, false);
     } else {
       unlockDeviceReady();
     }
-  }, false);
+  }
+  if (document.readyState === 'complete' ||
+      document.readyState === 'loaded' ||
+      document.readyState === 'interactive') {
+    setImmediate(execUnlock);
+  } else {
+    window.addEventListener('DOMContentLoaded', execUnlock, false);
+  }
 }
 
 /**

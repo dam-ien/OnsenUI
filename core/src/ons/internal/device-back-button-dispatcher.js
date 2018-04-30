@@ -62,7 +62,13 @@ const util = {
     }
   }
 };
-window.addEventListener('DOMContentLoaded', () => util._onDOMContentLoaded(), false);
+if (document.readyState === 'complete' ||
+    document.readyState === 'loaded' ||
+    document.readyState === 'interactive') {
+  setImmediate(util._onDOMContentLoaded());
+} else {
+  window.addEventListener('DOMContentLoaded', () => util._onDOMContentLoaded(), false);
+}
 
 const HandlerRepository = {
   _store: {},
